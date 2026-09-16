@@ -11,7 +11,6 @@ Automation
    │      ├── main.tf
    │      ├── provider.tf
    │      ├── terraform.tfstate
-   │      ├── terraform.tfstate.backup
    │      └── variables.tf
    └── .gitignore
 
