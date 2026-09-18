@@ -1,0 +1,66 @@
+- name: Install Docker and Deploy Frontend Application
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Update apt and install prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Set up Docker repository & Add Docker official GPG key
+      deb822_repository:
+        name: docker
+        uris: "https://download.docker.com/linux/ubuntu"
+        suites: "{{ ansible_facts['distribution_release'] }}"
+        components: ["stable"]
+        signed_by: "https://download.docker.com/linux/ubuntu/gpg"
+        state: present
+
+    - name: Install Docker Engine
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker service is running and enabled
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: use app_user to group docker
+      user:
+        name: "{{ app_user }}"
+        groups: docker
+        append: true
+
+    - name: Pull frontend image from Docker Hub
+      docker_image:
+        name: "{{ docker_image }}"
+        source: pull
+
+    - name: Restart Docker service to clear cache/locks
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+
+    - name: Run frontend container
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ docker_image }}"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "{{ app_port }}:3000"

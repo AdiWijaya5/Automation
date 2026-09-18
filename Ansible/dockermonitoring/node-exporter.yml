@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  node-exporter:
+    command:
+      - "--web.listen-address=:9100"
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/host"
+      - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'"
+    expose:
+      - "9100"
+    image: prom/node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    volumes:
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/:/host:ro"

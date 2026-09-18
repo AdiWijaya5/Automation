@@ -1,0 +1,31 @@
+services:
+  grafana:
+    container_name: grafana
+    restart: always
+    expose:
+      - "3000"
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    stdin_open: true
+    volumes:
+      - "grafana-data:/var/lib/grafana"
+
+  prometheus:
+    container_name: prometheus
+    restart: always
+    expose:
+      - "9090"
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    stdin_open: true
+    volumes:
+      - "/home/ady/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "prometheus-data:/prometheus"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+volumes:
+  prometheus-data:
+  grafana-data:

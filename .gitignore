@@ -26,3 +26,36 @@ crash.*.log
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Ansible execution artifacts
+*.retry
+
+# Ansible Galaxy dependencies
+# Hapus tanda komentar (#) jika Anda mengunduh role/collection eksternal ke folder ini
+# roles/
+# collections/
+config/
+group_vars/
+ansible.cfg
+Inventory/
+
+# Sensitive data / Passwords
+*.vault_password
+.vault_pass
+secrets_plain.yml
+
+# Python environment & cache
+*.py[co]
+__pycache__/
+.venv/
+venv/
+env/
+
+# Logging
+*.log
+
+# IDE and OS files
+.DS_Store
+.idea/
+.vscode/
+.history/

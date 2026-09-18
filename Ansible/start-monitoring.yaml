@@ -1,0 +1,46 @@
+---
+- name: Installing Server Monitoring
+  hosts: monitoring
+  become: true
+  vars:
+    remote: "/home/ady/monitoring"
+    local: "/home/adi/Automation/Ansible"
+
+  tasks:
+    - name: Sending prometheus config
+      ansible.builtin.copy:
+        src: "{{ local }}/config/prometheus.yml"
+        dest: "{{remote}}/prometheus.yml"
+        owner: "ady"
+        group: "ady"
+        mode: "0644"
+
+    - name: Send compose-monitoring.yml
+      ansible.builtin.copy:
+        src: "{{ local }}/dockermonitoring/compose-monitoring.yml"
+        dest: "{{remote}}/compose-monitoring.yml"
+        owner: "ady"
+        group: "ady"
+        mode: "0644"
+
+    - name: Restart Docker service to clear cache/locks
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+
+    - name: Stop monitoring containers (Docker Down)
+      community.docker.docker_compose_v2:
+        files:
+          - compose-monitoring.yml
+        project_name: monitoring
+        project_src: "{{ remote }}"
+        state: absent
+
+    - name: Start monitoring containers (Docker Up)
+      community.docker.docker_compose_v2:
+        files:
+          - compose-monitoring.yml
+        project_name: monitoring
+        project_src: "{{ remote }}"
+        state: present
+        pull: always

@@ -1,0 +1,31 @@
+---
+- name: Install NGINX
+  hosts: gateway
+  become: true
+
+  tasks:
+    - name: Instaling Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+        update_cache: true
+
+    - name: Copying Reverse Proxy Configuration to Remote Server
+      ansible.builtin.copy:
+        src: /home/adi/rproxy/domain.conf
+        dest: /etc/nginx/sites-available/rproxy.conf
+        owner: ady
+        group: ady
+        mode: "0644"
+
+    - name: Enable site by creating symlink
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/rproxy.conf
+        dest: /etc/nginx/sites-enabled/rproxy.conf
+        state: link
+
+    - name: Restart Nginx service
+      ansible.builtin.systemd_service:
+        state: restarted
+        daemon_reload: true
+        name: nginx

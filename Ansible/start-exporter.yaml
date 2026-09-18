@@ -1,0 +1,37 @@
+---
+- name: "Installing Exporter"
+  hosts: webservers, monitoring
+  become: true
+  vars:
+    remote: "/home/ady/monitoring"
+    local: "/home/adi/Automation/Ansible"
+
+  tasks:
+    - name: Create monitoring directory
+      ansible.builtin.file:
+        path: "{{ remote }}"
+        state: directory
+        owner: "ady"
+        group: "ady"
+        mode: "0755"
+
+    - name: Sending compose config
+      ansible.builtin.copy:
+        src: "{{ local }}/dockermonitoring/node-exporter.yml"
+        dest: "{{ remote }}/node-exporter.yaml"
+        owner: "ady"
+        group: "ady"
+        mode: "0644"
+
+    - name: Restart Docker service
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+
+    - name: "Running docker-compose"
+      community.docker.docker_compose_v2:
+        files:
+          - node-exporter.yaml
+        project_name: monitoring
+        project_src: "{{ remote }}"
+        state: present

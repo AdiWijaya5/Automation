@@ -1,0 +1,15 @@
+[webservers]
+13.251.123.17 
+54.251.210.57
+
+[gateway]
+47.130.163.228
+
+[monitoring]
+13.213.92.132
+
+[all:vars]
+ansible_user=ady
+ansible_user=admin
+ansible_python_interpreter=/usr/bin/python3
+ansible_config=ansible.cfg

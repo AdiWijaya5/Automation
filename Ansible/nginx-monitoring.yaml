@@ -1,0 +1,42 @@
+---
+- name: Configure Nginx Reverse Proxy monitoring
+  hosts: gateway
+  become: true
+
+  tasks:
+    - name: Copying Reverse Proxy Configuration to Remote Server
+      ansible.builtin.copy:
+        src: /home/adi/monitoring/domain.conf
+        dest: /etc/nginx/sites-available/monitoring.conf
+        owner: ady
+        group: ady
+        mode: "0644"
+
+    - name: Enable site by creating symlink
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/monitoring.conf
+        dest: /etc/nginx/sites-enabled/monitoring.conf
+        state: link
+
+    - name: Install Certbot and python3-certbot-nginx
+      ansible.builtin.apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+        update_cache: true
+
+    - name: Generate SSL Certificates with Certbot
+      ansible.builtin.command: >
+        certbot --nginx --non-interactive --agree-tos -m adiwiajaya.jy@gmail.com
+        -d exporter-adiwijaya.studentdumbways.my.id
+        -d prom-adiwijaya.studentdumbways.my.id
+        -d monitoring-adiwijaya.studentdumbways.my.id
+      args:
+        creates: /etc/letsencrypt/live/exporter-adiwijaya.studentdumbways.my.id/fullchain.pem
+
+    - name: Restart Nginx service
+      ansible.builtin.systemd_service:
+        state: restarted
+        daemon_reload: true
+        name: nginx
