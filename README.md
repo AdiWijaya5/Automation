@@ -12,5 +12,8 @@ Automation
    │      ├── provider.tf
    │      ├── terraform.tfstate
    │      └── variables.tf
+   └── Ansible
+   |   └── dockermonitoring
+   |   └── etc
    └── .gitignore
 
