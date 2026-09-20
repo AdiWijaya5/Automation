@@ -10,10 +10,25 @@ Automation
    │   └── aws
    │      ├── main.tf
    │      ├── provider.tf
-   │      ├── terraform.tfstate
+   │      ├── data.tf
    │      └── variables.tf
    └── Ansible
-   |   └── dockermonitoring
-   |   └── etc
+   │   ├── Inventory
+   │   ├── ansible.cfg
+   │   ├── config
+   │   │   └── prometheus.yml
+   │   ├── create-user.yaml
+   │   ├── dockermonitoring
+   │   │   ├── compose-monitoring.yml
+   │   │   └── node-exporter.yml
+   │   ├── group_vars
+   │   │   ├── all
+   │   │   └── webservers.yaml
+   │   ├── instal-nginx.yaml
+   │   ├── instalasi-docker.yaml
+   │   ├── install-certbot.yaml
+   │   ├── nginx-monitoring.yaml
+   │   ├── start-exporter.yaml
+   │   └── start-monitoring.yaml
    └── .gitignore
 
